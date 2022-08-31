@@ -158,10 +158,44 @@ const BattleMap: React.FC<BattleMapProps> = (
     }
   };
 
+  const onAttack = (
+    selectedAttack: AttackSelected,
+    damage: number,
+    player: React.RefObject<Sprite>,
+    enemy: React.RefObject<Sprite>,
+    fireball: React.RefObject<Sprite>,
+    isEnemy = false,
+    showDialogBoxOnComplete = false
+  ): void => {
+    setAttackSelected({
+      monster: selectedAttack.monster,
+      attack: selectedAttack.attack,
+    });
+    switch (selectedAttack.attack) {
+      case AttackNames.TACKLE:
+        tackleEnemy(player, enemy, damage, (): void => {
+          showDialogBoxOnComplete && setShowDialogBox(true);
+        });
+        break;
+      case AttackNames.FIREBALL:
+        setDrawFireball(true);
+        throwFireball(
+          fireball,
+          enemy,
+          isEnemy,
+          (): void => setDrawFireball(false),
+          (): void => {
+            showDialogBoxOnComplete && setShowDialogBox(true);
+          }
+        );
+        break;
+    }
+  };
+
   const getDialogBox = (): React.ReactElement => {
     return (
       <DialogBox
-        message={`${attackSelected.monster} used ${attackSelected.attack}`}
+        message={`${attackSelected.monster} used ${attackSelected.attack}!`}
         onDialogBoxClicked={(): void => {
           if (attackSelected.monster === player) {
             // Randomize enemy attack
@@ -170,30 +204,17 @@ const BattleMap: React.FC<BattleMapProps> = (
               enemyAttacks[Math.floor(Math.random() * enemyAttacks.length)];
             playerHealthBar > 0 &&
               setPlayerHealthBar(playerHealthBar - randomAttack.damage);
-            setAttackSelected({
-              monster: enemy,
-              attack: randomAttack.name,
-            });
-            switch (randomAttack.name) {
-              case AttackNames.TACKLE:
-                tackleEnemy(
-                  enemySpriteRef,
-                  playerSpriteRef,
-                  randomAttack.damage,
-                  (): void => setShowDialogBox(false)
-                );
-                break;
-              case AttackNames.FIREBALL:
-                setDrawFireball(true);
-                throwFireball(
-                  enemyFireballSpriteRef,
-                  playerSpriteRef,
-                  true,
-                  (): void => setDrawFireball(false),
-                  (): void => setShowDialogBox(false)
-                );
-                break;
-            }
+            onAttack(
+              {
+                monster: enemy,
+                attack: randomAttack.name,
+              },
+              randomAttack.damage,
+              enemySpriteRef,
+              playerSpriteRef,
+              enemyFireballSpriteRef,
+              true
+            );
           } else {
             setShowDialogBox(false);
           }
@@ -210,30 +231,18 @@ const BattleMap: React.FC<BattleMapProps> = (
           // Player chooses attack
           enemyHealthBar > 0 &&
             setEnemyHealthBar(enemyHealthBar - attack.damage);
-          setAttackSelected({
-            monster: player,
-            attack: attack.name,
-          });
-          switch (attack.name) {
-            case AttackNames.TACKLE:
-              tackleEnemy(
-                playerSpriteRef,
-                enemySpriteRef,
-                attack.damage,
-                (): void => setShowDialogBox(true)
-              );
-              break;
-            case AttackNames.FIREBALL:
-              setDrawFireball(true);
-              throwFireball(
-                playerFireballSpriteRef,
-                enemySpriteRef,
-                false,
-                (): void => setDrawFireball(false),
-                (): void => setShowDialogBox(true)
-              );
-              break;
-          }
+          onAttack(
+            {
+              monster: player,
+              attack: attack.name,
+            },
+            attack.damage,
+            playerSpriteRef,
+            enemySpriteRef,
+            playerFireballSpriteRef,
+            false,
+            true
+          );
         }}
       />
     );

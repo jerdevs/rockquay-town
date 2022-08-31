@@ -30,6 +30,8 @@ const GameMap: React.FC<GameMapProps> = (
   const { battleInitiated, onBattleInitiated } = props;
   const canvasRef: React.RefObject<HTMLCanvasElement> =
     React.useRef<HTMLCanvasElement>(null);
+  const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
+  // Need to store below in store
   const [backgroundSprite, setBackgroundSprite] = React.useState<Sprite | null>(
     null
   );
@@ -39,7 +41,6 @@ const GameMap: React.FC<GameMapProps> = (
   const [foregroundSprite, setForegroundSprite] = React.useState<Sprite>(
     initialForegroundSprite
   );
-  const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
   const [playerSprite, setPlayerSprite] =
     React.useState<Sprite>(initialPlayerSprite);
   const [battleZones, setBattleZones] = React.useState<Boundary[]>(

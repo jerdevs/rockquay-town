@@ -21,7 +21,7 @@ const AttackBar: React.FC<AttackBarProps> = (
           return (
             <button
               key={index}
-              className="hover:bg-slate-200"
+              className="hover:bg-slate-200 border-l-4 border-y-4 border-solid border-black"
               onClick={(): void => onAttack && onAttack(attack)}
               onMouseEnter={(): void => {
                 setAttackType(attack.type);
@@ -41,10 +41,10 @@ const AttackBar: React.FC<AttackBarProps> = (
   };
 
   return (
-    <div className="flex h-36 bottom-0 left-0 right-0 absolute bg-white border-t-4 border-solid border-black">
+    <div className="flex h-36 bottom-0 left-0 right-0 absolute bg-white">
       <div className="w-2/3 grid grid-cols-2">{getAttacks()}</div>
       <div
-        className={`w-1/3 flex items-center justify-center border-l-4 border-solid border-black ${attackBgColor}`}
+        className={`w-1/3 flex items-center justify-center border-4 border-solid border-black ${attackBgColor}`}
       >
         {attackType}
       </div>

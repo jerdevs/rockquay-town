@@ -11,7 +11,7 @@ const DialogBox: React.FC<DialogBoxProps> = (
   const { message, onDialogBoxClicked } = props;
   return (
     <div
-      className="cursor-pointer h-36 absolute bg-white border-t-4 border-solid border-black bottom-0 left-0 right-0 p-3"
+      className="cursor-pointer h-36 absolute bg-white border-4 border-solid border-black bottom-0 left-0 right-0 p-3"
       onClick={onDialogBoxClicked}
     >
       {message}
