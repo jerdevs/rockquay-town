@@ -13,37 +13,61 @@ import {
   MAX_MONSTER_ELAPSED,
 } from "../../Constants";
 import AttackBar from "../AttackBar/AttackBar";
+import DialogBox from "../DialogBox/DialogBox";
 import { CharFrame } from "../GameMap/GameMap.interface";
 import HealthBar from "../HealthBar/HealthBar";
-import { Attack, AttackNames } from "./BattleMap.interface";
+import { Attack } from "../../data/Attacks/Attacks.interface";
 import {
-  draggle,
-  emby,
-  initialDraggleSprite,
-  initialEmbySprite,
   initialBackgroundSprite,
-  attacks,
-  initialFireballSprite,
   tackleEnemy,
   throwFireball,
   fireball,
+  initialPlayerAttackSelected,
+  initialEnemyFireballSprite,
+  initialPlayerFireballSprite,
 } from "./BattleMap.utils";
+import { AttackNames } from "../../data/Attacks/Attacks";
+import { draggle, emby, monsters } from "../../data/Monsters/Monsters";
+import { AttackSelected } from "./BattleMap.interface";
+import ScreenCover from "../ScreenCover/ScreenCover";
 
-const BattleMap: React.FC = (): React.ReactElement => {
+interface BattleMapProps {
+  player: string;
+  enemy: string;
+  goToGameMap?: () => void;
+}
+
+const BattleMap: React.FC<BattleMapProps> = (
+  props: BattleMapProps
+): React.ReactElement => {
+  const { player, enemy, goToGameMap } = props;
   const canvasRef: React.RefObject<HTMLCanvasElement> =
     React.useRef<HTMLCanvasElement>(null);
-  const draggleSpriteRef: React.RefObject<Sprite> =
-    React.useRef<Sprite>(initialDraggleSprite);
-  const embySpriteRef: React.RefObject<Sprite> =
-    React.useRef<Sprite>(initialEmbySprite);
-  const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
-  const [draggleHealthBar, setDraggleHealthBar] = React.useState<number>(100);
-  const [embyHealthBar, setEmbyHealthBar] = React.useState<number>(100);
-  const [drawFireball, setDrawFireball] = React.useState(false);
-  const [attackComplete, setAttackComplete] = React.useState(false);
-  const fireballSpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
-    initialFireballSprite
+  const playerSpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
+    monsters[player]
   );
+  const enemySpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
+    monsters[enemy]
+  );
+  const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
+  const [playerHealthBar, setPlayerHealthBar] = React.useState<number>(100);
+  const [enemyHealthBar, setEnemyHealthBar] = React.useState<number>(100);
+  const [drawFireball, setDrawFireball] = React.useState(false);
+  const playerFireballSpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
+    initialPlayerFireballSprite
+  );
+  const enemyFireballSpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
+    initialEnemyFireballSprite
+  );
+  const [attackSelected, setAttackSelected] = React.useState<AttackSelected>(
+    initialPlayerAttackSelected(player)
+  );
+  const [showDialogBox, setShowDialogBox] = React.useState(false);
+  const [showScreenCover, setShowScreenCover] = React.useState(false);
+  const playerHasWon = enemyHealthBar < 1;
+  const enemyHasWon = playerHealthBar < 1;
+  const charHasFainted = playerHasWon || enemyHasWon;
+  const showAttackBar = !showDialogBox && (!playerHasWon || !enemyHasWon);
 
   React.useEffect((): (() => void) => {
     const animation = requestAnimationFrame(animateBattle);
@@ -53,27 +77,48 @@ const BattleMap: React.FC = (): React.ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [charFrame]);
 
-  React.useEffect((): void => {
-    if (attackComplete && draggleSpriteRef.current && draggleHealthBar === 0) {
-      draggleSpriteRef.current.render = false;
+  React.useEffect((): (() => void) => {
+    if (showDialogBox) {
+      if (enemySpriteRef.current && playerHasWon) {
+        enemySpriteRef.current.render = false;
+      }
+      if (playerSpriteRef.current && enemyHasWon) {
+        playerSpriteRef.current.render = false;
+      }
     }
-  }, [draggleHealthBar, attackComplete]);
+    return (): void => {
+      if (enemySpriteRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        enemySpriteRef.current.render = true;
+      }
+      if (playerSpriteRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        playerSpriteRef.current.render = true;
+      }
+    };
+  }, [
+    enemyHealthBar,
+    playerHealthBar,
+    showDialogBox,
+    playerHasWon,
+    enemyHasWon,
+  ]);
 
   const animateBattle = (): void => {
     if (canvasRef.current) {
       const canvasContext = canvasRef.current.getContext("2d");
-      if (canvasContext && embySpriteRef.current && draggleSpriteRef.current) {
+      if (canvasContext && playerSpriteRef.current && playerSpriteRef.current) {
         // Draw background
         drawImage(canvasContext, initialBackgroundSprite);
         // Draw draggle
         canvasContext.save();
-        if (draggleSpriteRef.current.position.opacity) {
-          canvasContext.globalAlpha = draggleSpriteRef.current.position.opacity;
+        if (enemySpriteRef.current?.position.opacity) {
+          canvasContext.globalAlpha = enemySpriteRef.current.position.opacity;
         }
-        draggleSpriteRef.current.render &&
+        enemySpriteRef.current?.render &&
           drawChar(
             canvasContext,
-            draggleSpriteRef.current,
+            enemySpriteRef.current,
             draggle,
             charFrame.frameIndex,
             MAX_CHAR_FRAMES
@@ -81,10 +126,21 @@ const BattleMap: React.FC = (): React.ReactElement => {
         canvasContext.restore();
         // Draw fireball
         drawFireball &&
-          fireballSpriteRef.current &&
+          attackSelected.monster === player &&
+          playerFireballSpriteRef.current &&
           drawChar(
             canvasContext,
-            fireballSpriteRef.current,
+            playerFireballSpriteRef.current,
+            fireball,
+            charFrame.frameIndex,
+            MAX_CHAR_FRAMES
+          );
+        drawFireball &&
+          attackSelected.monster === enemy &&
+          enemyFireballSpriteRef.current &&
+          drawChar(
+            canvasContext,
+            enemyFireballSpriteRef.current,
             fireball,
             charFrame.frameIndex,
             MAX_CHAR_FRAMES
@@ -92,7 +148,7 @@ const BattleMap: React.FC = (): React.ReactElement => {
         // Draw emby
         drawChar(
           canvasContext,
-          embySpriteRef.current,
+          playerSpriteRef.current,
           emby,
           charFrame.frameIndex,
           MAX_CHAR_FRAMES
@@ -102,47 +158,124 @@ const BattleMap: React.FC = (): React.ReactElement => {
     }
   };
 
-  return (
-    <>
-      <HealthBar
-        name="Draggle"
-        positionClassName="top-12 left-12"
-        health={draggleHealthBar}
+  const getDialogBox = (): React.ReactElement => {
+    return (
+      <DialogBox
+        message={`${attackSelected.monster} used ${attackSelected.attack}`}
+        onDialogBoxClicked={(): void => {
+          if (attackSelected.monster === player) {
+            // Randomize enemy attack
+            const enemyAttacks: Attack[] = monsters[enemy].attacks ?? [];
+            const randomAttack =
+              enemyAttacks[Math.floor(Math.random() * enemyAttacks.length)];
+            playerHealthBar > 0 &&
+              setPlayerHealthBar(playerHealthBar - randomAttack.damage);
+            setAttackSelected({
+              monster: enemy,
+              attack: randomAttack.name,
+            });
+            switch (randomAttack.name) {
+              case AttackNames.TACKLE:
+                tackleEnemy(
+                  enemySpriteRef,
+                  playerSpriteRef,
+                  randomAttack.damage,
+                  (): void => setShowDialogBox(false)
+                );
+                break;
+              case AttackNames.FIREBALL:
+                setDrawFireball(true);
+                throwFireball(
+                  enemyFireballSpriteRef,
+                  playerSpriteRef,
+                  true,
+                  (): void => setDrawFireball(false),
+                  (): void => setShowDialogBox(false)
+                );
+                break;
+            }
+          } else {
+            setShowDialogBox(false);
+          }
+        }}
       />
-      <HealthBar
-        name="Emby"
-        positionClassName="top-80 right-12"
-        health={embyHealthBar}
-      />
-      <canvas
-        className="outline-0"
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
-        ref={canvasRef}
-        tabIndex={-1}
-      />
+    );
+  };
+
+  const getAttackBar = (): React.ReactElement => {
+    return (
       <AttackBar
-        attackType="Attack type"
-        attacks={attacks}
+        attacks={monsters[player].attacks ?? []}
         onAttack={(attack: Attack): void => {
-          setAttackComplete(false);
-          draggleHealthBar > 0 &&
-            setDraggleHealthBar(draggleHealthBar - attack.damage);
+          // Player chooses attack
+          enemyHealthBar > 0 &&
+            setEnemyHealthBar(enemyHealthBar - attack.damage);
+          setAttackSelected({
+            monster: player,
+            attack: attack.name,
+          });
           switch (attack.name) {
             case AttackNames.TACKLE:
-              tackleEnemy(embySpriteRef, draggleSpriteRef, 50, (): void =>
-                setAttackComplete(true)
+              tackleEnemy(
+                playerSpriteRef,
+                enemySpriteRef,
+                attack.damage,
+                (): void => setShowDialogBox(true)
               );
               break;
             case AttackNames.FIREBALL:
               setDrawFireball(true);
-              throwFireball(fireballSpriteRef, draggleSpriteRef, (): void =>
-                setDrawFireball(false)
+              throwFireball(
+                playerFireballSpriteRef,
+                enemySpriteRef,
+                false,
+                (): void => setDrawFireball(false),
+                (): void => setShowDialogBox(true)
               );
               break;
           }
         }}
       />
+    );
+  };
+
+  const getBattleMap = (): React.ReactElement => {
+    return (
+      <>
+        <HealthBar
+          name={enemy}
+          positionClassName="top-12 left-12"
+          health={enemyHealthBar}
+        />
+        <HealthBar
+          name={player}
+          positionClassName="top-80 right-12"
+          health={playerHealthBar}
+        />
+        <canvas
+          className="outline-0"
+          width={CANVAS_WIDTH}
+          height={CANVAS_HEIGHT}
+          ref={canvasRef}
+          tabIndex={-1}
+        />
+        {showDialogBox ? getDialogBox() : showAttackBar && getAttackBar()}
+        {charHasFainted && (
+          <DialogBox
+            message={`${playerHasWon ? enemy : player} has fainted!`}
+            onDialogBoxClicked={(): void => setShowScreenCover(true)}
+          />
+        )}
+      </>
+    );
+  };
+
+  return (
+    <>
+      {showScreenCover && (
+        <ScreenCover onComplete={(): void => goToGameMap && goToGameMap()} />
+      )}
+      {getBattleMap()}
     </>
   );
 };

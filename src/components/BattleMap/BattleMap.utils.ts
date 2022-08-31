@@ -1,18 +1,11 @@
-import { TACKLE_DAMAGE, FIREBALL_DAMAGE } from "./../../Constants";
+import { AttackSelected } from "./BattleMap.interface";
 import { Sprite } from "../../App.interface";
 import BattleBackground from "../../images/BattleBackground.png";
-import Draggle from "../../images/Draggle.png";
-import Emby from "../../images/Emby.png";
 import Fireball from "../../images/Fireball.png";
 import { gsap } from "gsap";
-import { Attack, AttackNames, AttackTypes } from "./BattleMap.interface";
 
 export const battleMap = new Image();
 battleMap.src = BattleBackground;
-export const draggle = new Image();
-draggle.src = Draggle;
-export const emby = new Image();
-emby.src = Emby;
 export const fireball = new Image();
 fireball.src = Fireball;
 
@@ -24,25 +17,7 @@ export const initialBackgroundSprite: Sprite = {
   image: battleMap,
 };
 
-export const initialDraggleSprite: Sprite = {
-  position: {
-    x: 800,
-    y: 100,
-    opacity: 1,
-  },
-  image: draggle,
-  render: true,
-};
-
-export const initialEmbySprite: Sprite = {
-  position: {
-    x: 280,
-    y: 325,
-  },
-  image: emby,
-};
-
-export const initialFireballSprite: Sprite = {
+export const initialPlayerFireballSprite: Sprite = {
   position: {
     x: 280,
     y: 325,
@@ -50,18 +25,20 @@ export const initialFireballSprite: Sprite = {
   image: fireball,
 };
 
-export const attacks: Attack[] = [
-  {
-    name: AttackNames.TACKLE,
-    damage: TACKLE_DAMAGE,
-    type: AttackTypes.NORMAL,
+export const initialEnemyFireballSprite: Sprite = {
+  position: {
+    x: 800,
+    y: 100,
   },
-  {
-    name: AttackNames.FIREBALL,
-    damage: FIREBALL_DAMAGE,
-    type: AttackTypes.FIRE,
-  },
-];
+  image: fireball,
+};
+
+export const initialPlayerAttackSelected = (player: string): AttackSelected => {
+  return {
+    monster: player,
+    attack: "",
+  };
+};
 
 export const tackleEnemy = (
   playerRef: React.RefObject<Sprite>,
@@ -98,6 +75,8 @@ export const tackleEnemy = (
 export const throwFireball = (
   fireballSpriteRef: React.RefObject<Sprite>,
   enemyRef: React.RefObject<Sprite>,
+  isEnemy = false,
+  fireballComplete?: () => void,
   onComplete?: () => void
 ): void => {
   const playerAttackTimeline = gsap.timeline();
@@ -108,7 +87,7 @@ export const throwFireball = (
         x: enemyRef.current.position.x,
         y: enemyRef.current.position.y,
         onComplete: (): void => {
-          onComplete && onComplete();
+          fireballComplete && fireballComplete();
           enemyRef.current?.position &&
             gsap.to(enemyRef.current.position, {
               opacity: 0,
@@ -116,11 +95,16 @@ export const throwFireball = (
               yoyo: true,
               repeat: 5,
               duration: 0.08,
+              onComplete,
             });
         },
       })
       .to(fireballSpriteRef.current.position, {
-        x: initialFireballSprite.position.x,
-        y: initialFireballSprite.position.y,
+        x: isEnemy
+          ? initialEnemyFireballSprite.position.x
+          : initialPlayerFireballSprite.position.x,
+        y: isEnemy
+          ? initialEnemyFireballSprite.position.y
+          : initialPlayerFireballSprite.position.y,
       });
 };

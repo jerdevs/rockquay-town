@@ -13,8 +13,8 @@ import PlayerDown from "../../images/PlayerDown.png";
 import PlayerUp from "../../images/PlayerUp.png";
 import PlayerLeft from "../../images/PlayerLeft.png";
 import PlayerRight from "../../images/PlayerRight.png";
-import { collisions } from "../../data/Collisions";
-import { battleZones } from "../../data/BattleZones";
+import { collisions } from "../../data/Collisions/Collisions";
+import { battleZones } from "../../data/BattleZones/BattleZones";
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,

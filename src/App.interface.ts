@@ -1,3 +1,5 @@
+import { Attack } from "./data/Attacks/Attacks.interface";
+
 export interface GameSequence {
   onGameMap?: boolean;
   battleInitiated?: boolean;
@@ -13,5 +15,6 @@ export interface Position {
 export interface Sprite {
   position: Position;
   image: HTMLImageElement;
+  attacks?: Attack[];
   render?: boolean;
 }

@@ -4,6 +4,7 @@ import { initialGameSequence, resetGameSequence } from "./App.utils";
 import BattleMap from "./components/BattleMap/BattleMap";
 import GameMap from "./components/GameMap/GameMap";
 import ScreenCover from "./components/ScreenCover/ScreenCover";
+import { MonsterNames } from "./data/Monsters/Monsters";
 
 const App: React.FC = (): React.ReactElement => {
   const [gameSequence, setGameSequence] =
@@ -24,15 +25,23 @@ const App: React.FC = (): React.ReactElement => {
       )}
       {gameSequence.battleInitiated && (
         <ScreenCover
-          onComplete={(): void => {
+          yoyo
+          repeat={3}
+          onComplete={(): void =>
             setGameSequence({
               ...resetGameSequence,
               onBattleMap: true,
-            });
-          }}
+            })
+          }
         />
       )}
-      {gameSequence.onBattleMap && <BattleMap />}
+      {gameSequence.onBattleMap && (
+        <BattleMap
+          player={MonsterNames.EMBY}
+          enemy={MonsterNames.DRAGGLE}
+          goToGameMap={(): void => setGameSequence(initialGameSequence)}
+        />
+      )}
     </div>
   );
 };
