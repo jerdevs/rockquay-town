@@ -379,6 +379,7 @@ export const drawBoundary = (
 };
 
 export const isCollided = (rect1: Sprite, rect2: Boundary): boolean => {
+  // TODO: Debug on collisions when hitting boundaries
   return (
     rect1.position.x + rect1.image.width / MAX_CHAR_FRAMES >=
       rect2.position.x &&

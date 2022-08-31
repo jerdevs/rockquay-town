@@ -30,8 +30,8 @@ const GameMap: React.FC<GameMapProps> = (
   const { battleInitiated, onBattleInitiated } = props;
   const canvasRef: React.RefObject<HTMLCanvasElement> =
     React.useRef<HTMLCanvasElement>(null);
-  const [backgroundSprite, setBackgroundSprite] = React.useState<Sprite>(
-    initialBackgroundSprite
+  const [backgroundSprite, setBackgroundSprite] = React.useState<Sprite | null>(
+    null
   );
   const [boundaries, setBoundaries] = React.useState<Boundary[]>(
     getBoundaries()
@@ -46,17 +46,22 @@ const GameMap: React.FC<GameMapProps> = (
     getBattleZones()
   );
 
-  React.useEffect((): void => {
-    animateGame();
+  React.useEffect((): (() => void) => {
+    const animation = requestAnimationFrame(animateGame);
+    return (): void => {
+      cancelAnimationFrame(animation);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [backgroundSprite]);
 
   const animateGame = (): void => {
+    !backgroundSprite && setBackgroundSprite(initialBackgroundSprite);
     if (canvasRef.current) {
+      canvasRef.current.focus();
       const canvasContext = canvasRef.current.getContext("2d");
       if (canvasContext) {
         // Draw background
-        drawImage(canvasContext, backgroundSprite);
+        backgroundSprite && drawImage(canvasContext, backgroundSprite);
         // Draw boundaries
         boundaries.forEach((bound: Boundary): void => {
           drawBoundary(canvasContext, bound);
@@ -86,7 +91,7 @@ const GameMap: React.FC<GameMapProps> = (
     if (canvasRef.current && !battleInitiated) {
       const canvasContext = canvasRef.current.getContext("2d");
       if (canvasContext) {
-        if (isWASD) {
+        if (isWASD && backgroundSprite) {
           const updatedMovables = getUpdatedMovables(
             backgroundSprite,
             boundaries,
