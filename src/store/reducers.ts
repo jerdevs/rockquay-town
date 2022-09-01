@@ -2,6 +2,7 @@ import { Boundary } from "./../components/GameMap/GameMap.interface";
 import { Sprite } from "../App.interface";
 import {
   getBattleZones,
+  getBoundaries,
   initialForegroundSprite,
   initialPlayerSprite,
 } from "../components/GameMap/GameMap.utils";
@@ -26,7 +27,7 @@ export enum ActionTypes {
 
 export const initialState: Store = {
   backgroundSprite: null,
-  boundaries: [],
+  boundaries: getBoundaries(),
   foregroundSprite: initialForegroundSprite,
   playerSprite: initialPlayerSprite,
   battleZones: getBattleZones(),

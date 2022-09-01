@@ -24,6 +24,7 @@ import {
   drawBoundary,
   getUpdatedMovables,
   player,
+  isWASD,
 } from "./GameMap.utils";
 import MapAudio from "../../assets/audio/Map.wav";
 import InitBattleAudio from "../../assets/audio/InitBattle.wav";
@@ -85,12 +86,10 @@ const GameMap: React.FC<GameMapProps> = (
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLElement>): void => {
-    const isWASD =
-      e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d";
     if (canvasRef.current && !battleInitiated) {
       const canvasContext = canvasRef.current.getContext("2d");
       if (canvasContext) {
-        if (isWASD && state.backgroundSprite) {
+        if (isWASD(e.key) && state.backgroundSprite) {
           setIsWalking(true);
           const updatedMovables: Movable = getUpdatedMovables(
             state.backgroundSprite,

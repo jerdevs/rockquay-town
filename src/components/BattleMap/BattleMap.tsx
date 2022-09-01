@@ -85,7 +85,6 @@ const BattleMap: React.FC<BattleMapProps> = (
       if (enemySpriteRef.current && playerHasWon) {
         enemySpriteRef.current.render = false;
       }
-      console.log(enemyHasWon);
       if (playerSpriteRef.current && enemyHasWon) {
         playerSpriteRef.current.render = false;
       }

@@ -38,7 +38,7 @@ export const offset: Position = {
 export const initialPlayerSprite: Sprite = {
   position: {
     x: CANVAS_WIDTH / 2 - 154,
-    y: CANVAS_HEIGHT / 2,
+    y: CANVAS_HEIGHT / 2 + CHAR_STEP_SIZE,
   },
   image: player,
 };
@@ -369,7 +369,8 @@ export const drawBoundary = (
   canvasContext: CanvasRenderingContext2D,
   boundary: Boundary
 ): void => {
-  canvasContext.fillStyle = "rgba(255, 0, 0, 0)";
+  // canvasContext.fillStyle = "rgba(255, 0, 0, 0)";
+  canvasContext.fillStyle = "red";
   canvasContext.fillRect(
     boundary.position.x,
     boundary.position.y,
@@ -385,5 +386,14 @@ export const isCollided = (rect1: Sprite, rect2: Boundary): boolean => {
     rect1.position.x <= rect2.position.x + rect2.width &&
     rect1.position.y <= rect2.position.y + rect2.height &&
     rect1.position.y + rect1.image.height >= rect2.position.y
+  );
+};
+
+export const isWASD = (key: string): boolean => {
+  return (
+    key === Key.W.toLowerCase() ||
+    key === Key.A.toLowerCase() ||
+    key === Key.S.toLowerCase() ||
+    key === Key.D.toLowerCase()
   );
 };
