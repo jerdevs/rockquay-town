@@ -33,7 +33,7 @@ import WalkingAudio from "../../assets/audio/Walking.wav";
 const GameMap: React.FC<GameMapProps> = (
   props: GameMapProps
 ): React.ReactElement => {
-  const { battleInitiated, onBattleInitiated } = props;
+  const { battleInitiated = false, onBattleInitiated } = props;
   const canvasRef: React.RefObject<HTMLCanvasElement> =
     React.useRef<HTMLCanvasElement>(null);
   const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
@@ -48,40 +48,49 @@ const GameMap: React.FC<GameMapProps> = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.backgroundSprite]);
 
-  const animateGame = (): void => {
-    !state.backgroundSprite &&
-      dispatch({
-        type: ActionTypes.UPDATE_BACKGROUND_SPRITE,
-        payload: initialBackgroundSprite,
-      });
-
+  React.useEffect((): void => {
+    // Initial map rendering
     if (canvasRef.current) {
       canvasRef.current.focus();
       const canvasContext = canvasRef.current.getContext("2d");
       if (canvasContext) {
-        // Draw background
-        state.backgroundSprite &&
-          drawImage(canvasContext, state.backgroundSprite);
-        // Draw boundaries
-        state.boundaries.forEach((bound: Boundary): void => {
-          drawBoundary(canvasContext, bound);
-        });
-        // Draw battle zones
-        state.battleZones.forEach((bound: Boundary): void => {
-          drawBoundary(canvasContext, bound);
-        });
-        // Draw player
-        drawChar(
-          canvasContext,
-          state.playerSprite,
-          player,
-          charFrame.frameIndex,
-          MAX_CHAR_FRAMES
-        );
-        setCharFrame(getUpdatedCharFrame(charFrame, MAX_PLAYER_ELAPSED));
-        // Draw foreground
-        drawImage(canvasContext, state.foregroundSprite);
+        state.backgroundSprite.image.onload = (): void =>
+          getGameMapContents(canvasContext);
       }
+    }
+  }, []);
+
+  const getGameMapContents = (
+    canvasContext: CanvasRenderingContext2D
+  ): void => {
+    // Draw background
+    drawImage(canvasContext, state.backgroundSprite);
+    // Draw boundaries
+    state.boundaries.forEach((bound: Boundary): void => {
+      drawBoundary(canvasContext, bound);
+    });
+    // Draw battle zones
+    state.battleZones.forEach((bound: Boundary): void => {
+      drawBoundary(canvasContext, bound);
+    });
+    // Draw player
+    drawChar(
+      canvasContext,
+      state.playerSprite,
+      player,
+      charFrame.frameIndex,
+      MAX_CHAR_FRAMES
+    );
+    setCharFrame(getUpdatedCharFrame(charFrame, MAX_PLAYER_ELAPSED));
+    // Draw foreground
+    drawImage(canvasContext, state.foregroundSprite);
+  };
+
+  const animateGame = (): void => {
+    if (canvasRef.current) {
+      canvasRef.current.focus();
+      const canvasContext = canvasRef.current.getContext("2d");
+      canvasContext && getGameMapContents(canvasContext);
     }
   };
 

@@ -3,12 +3,13 @@ import { Sprite } from "../App.interface";
 import {
   getBattleZones,
   getBoundaries,
+  initialBackgroundSprite,
   initialForegroundSprite,
   initialPlayerSprite,
 } from "../components/GameMap/GameMap.utils";
 
 export interface Store {
-  backgroundSprite: Sprite | null;
+  backgroundSprite: Sprite;
   boundaries: Boundary[];
   foregroundSprite: Sprite;
   playerSprite: Sprite;
@@ -26,7 +27,7 @@ export enum ActionTypes {
 }
 
 export const initialState: Store = {
-  backgroundSprite: null,
+  backgroundSprite: initialBackgroundSprite,
   boundaries: getBoundaries(),
   foregroundSprite: initialForegroundSprite,
   playerSprite: initialPlayerSprite,
