@@ -25,6 +25,8 @@ import {
   initialPlayerAttackSelected,
   initialEnemyFireballSprite,
   initialPlayerFireballSprite,
+  getBattleMapAudioSource,
+  getAttackAudioSource,
 } from "./BattleMap.utils";
 import { AttackNames } from "../../data/Attacks/Attacks";
 import { draggle, emby, monsters } from "../../data/Monsters/Monsters";
@@ -64,6 +66,7 @@ const BattleMap: React.FC<BattleMapProps> = (
   );
   const [showDialogBox, setShowDialogBox] = React.useState(false);
   const [showScreenCover, setShowScreenCover] = React.useState(false);
+  const [attackAudio, setAttackAudio] = React.useState("");
   const playerHasWon = enemyHealthBar < 1;
   const enemyHasWon = playerHealthBar < 1;
   const charHasFainted = playerHasWon || enemyHasWon;
@@ -82,6 +85,7 @@ const BattleMap: React.FC<BattleMapProps> = (
       if (enemySpriteRef.current && playerHasWon) {
         enemySpriteRef.current.render = false;
       }
+      console.log(enemyHasWon);
       if (playerSpriteRef.current && enemyHasWon) {
         playerSpriteRef.current.render = false;
       }
@@ -146,13 +150,14 @@ const BattleMap: React.FC<BattleMapProps> = (
             MAX_CHAR_FRAMES
           );
         // Draw emby
-        drawChar(
-          canvasContext,
-          playerSpriteRef.current,
-          emby,
-          charFrame.frameIndex,
-          MAX_CHAR_FRAMES
-        );
+        playerSpriteRef.current?.render &&
+          drawChar(
+            canvasContext,
+            playerSpriteRef.current,
+            emby,
+            charFrame.frameIndex,
+            MAX_CHAR_FRAMES
+          );
         setCharFrame(getUpdatedCharFrame(charFrame, MAX_MONSTER_ELAPSED));
       }
     }
@@ -171,10 +176,12 @@ const BattleMap: React.FC<BattleMapProps> = (
       monster: selectedAttack.monster,
       attack: selectedAttack.attack,
     });
+    setAttackAudio(selectedAttack.attack);
     switch (selectedAttack.attack) {
       case AttackNames.TACKLE:
         tackleEnemy(player, enemy, damage, (): void => {
           showDialogBoxOnComplete && setShowDialogBox(true);
+          setAttackAudio("");
         });
         break;
       case AttackNames.FIREBALL:
@@ -186,6 +193,7 @@ const BattleMap: React.FC<BattleMapProps> = (
           (): void => setDrawFireball(false),
           (): void => {
             showDialogBoxOnComplete && setShowDialogBox(true);
+            setAttackAudio("");
           }
         );
         break;
@@ -281,6 +289,14 @@ const BattleMap: React.FC<BattleMapProps> = (
 
   return (
     <>
+      <audio
+        src={!enemyHasWon ? getBattleMapAudioSource(playerHasWon) : ""}
+        autoPlay
+        loop={!playerHasWon}
+      />
+      {attackAudio && (
+        <audio src={getAttackAudioSource(attackAudio)} autoPlay />
+      )}
       {showScreenCover && (
         <ScreenCover onComplete={(): void => goToGameMap && goToGameMap()} />
       )}

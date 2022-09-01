@@ -7,12 +7,12 @@ import {
   MAX_SYMBOL,
 } from "../../Constants";
 import { Boundary, Movable } from "./GameMap.interface";
-import RockquayTown from "../../images/RockquayTown.png";
-import Foreground from "../../images/Foreground.png";
-import PlayerDown from "../../images/PlayerDown.png";
-import PlayerUp from "../../images/PlayerUp.png";
-import PlayerLeft from "../../images/PlayerLeft.png";
-import PlayerRight from "../../images/PlayerRight.png";
+import RockquayTown from "../../assets/images/RockquayTown.png";
+import Foreground from "../../assets/images/Foreground.png";
+import PlayerDown from "../../assets/images/PlayerDown.png";
+import PlayerUp from "../../assets/images/PlayerUp.png";
+import PlayerLeft from "../../assets/images/PlayerLeft.png";
+import PlayerRight from "../../assets/images/PlayerRight.png";
 import { collisions } from "../../data/Collisions/Collisions";
 import { battleZones } from "../../data/BattleZones/BattleZones";
 import {
@@ -90,7 +90,7 @@ export const getUpdatedMovables = (
         ((currentPlayerSprite.image.width / MAX_CHAR_FRAMES) *
           currentPlayerSprite.image.height) /
           2 &&
-      Math.random() < 0.05
+      Math.random() < 0.03
     ) {
       onBattleInitiated && onBattleInitiated();
       break;
@@ -379,7 +379,6 @@ export const drawBoundary = (
 };
 
 export const isCollided = (rect1: Sprite, rect2: Boundary): boolean => {
-  // TODO: Debug on collisions when hitting boundaries
   return (
     rect1.position.x + rect1.image.width / MAX_CHAR_FRAMES >=
       rect2.position.x &&

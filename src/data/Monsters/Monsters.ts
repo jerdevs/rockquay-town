@@ -1,6 +1,6 @@
 import { Sprite } from "./../../App.interface";
-import Emby from "../../images/Emby.png";
-import Draggle from "../../images/Draggle.png";
+import Emby from "../../assets/images/Emby.png";
+import Draggle from "../../assets/images/Draggle.png";
 import { AttackNames, attacks } from "../Attacks/Attacks";
 
 export const emby = new Image();

@@ -35,7 +35,6 @@ export const initialState: Store = {
 export const reducers = (state = initialState, action: Action): Store => {
   switch (action.type) {
     case ActionTypes.UPDATE_BACKGROUND_SPRITE:
-      console.log("update bg sprite", action.payload);
       return {
         ...state,
         backgroundSprite: action.payload,

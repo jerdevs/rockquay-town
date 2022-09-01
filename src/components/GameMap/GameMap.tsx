@@ -25,6 +25,8 @@ import {
   getUpdatedMovables,
   player,
 } from "./GameMap.utils";
+import MapAudio from "../../assets/audio/Map.wav";
+import InitBattleAudio from "../../assets/audio/InitBattle.wav";
 
 const GameMap: React.FC<GameMapProps> = (
   props: GameMapProps
@@ -42,8 +44,6 @@ const GameMap: React.FC<GameMapProps> = (
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.backgroundSprite]);
-
-  console.log(state);
 
   const animateGame = (): void => {
     !state.backgroundSprite &&
@@ -110,14 +110,21 @@ const GameMap: React.FC<GameMapProps> = (
   };
 
   return (
-    <canvas
-      className="outline-0"
-      width={CANVAS_WIDTH}
-      height={CANVAS_HEIGHT}
-      ref={canvasRef}
-      tabIndex={-1}
-      onKeyDown={onKeyDown}
-    />
+    <>
+      <audio
+        src={battleInitiated ? InitBattleAudio : MapAudio}
+        autoPlay
+        loop={!battleInitiated}
+      />
+      <canvas
+        className="outline-0"
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
+        ref={canvasRef}
+        tabIndex={-1}
+        onKeyDown={onKeyDown}
+      />
+    </>
   );
 };
 

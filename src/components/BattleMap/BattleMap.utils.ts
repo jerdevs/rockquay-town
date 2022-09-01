@@ -1,8 +1,13 @@
+import { AttackNames } from "./../../data/Attacks/Attacks";
 import { AttackSelected } from "./BattleMap.interface";
 import { Sprite } from "../../App.interface";
-import BattleBackground from "../../images/BattleBackground.png";
-import Fireball from "../../images/Fireball.png";
+import BattleBackground from "../../assets/images/BattleBackground.png";
+import Fireball from "../../assets/images/Fireball.png";
 import { gsap } from "gsap";
+import BattleAudio from "../../assets/audio/Battle.mp3";
+import VictoryAudio from "../../assets/audio/Victory.wav";
+import TackleHitAudio from "../../assets/audio/TackleHit.wav";
+import FireballHitAudio from "../../assets/audio/FireballHit.wav";
 
 export const battleMap = new Image();
 battleMap.src = BattleBackground;
@@ -107,4 +112,22 @@ export const throwFireball = (
           ? initialEnemyFireballSprite.position.y
           : initialPlayerFireballSprite.position.y,
       });
+};
+
+export const getBattleMapAudioSource = (playerHasWon = false): string => {
+  let audio = BattleAudio;
+  if (playerHasWon) {
+    audio = VictoryAudio;
+  }
+  return audio;
+};
+
+export const getAttackAudioSource = (attackAudio: string): string => {
+  switch (attackAudio) {
+    case AttackNames.TACKLE:
+      return TackleHitAudio;
+    case AttackNames.FIREBALL:
+      return FireballHitAudio;
+  }
+  return "";
 };
