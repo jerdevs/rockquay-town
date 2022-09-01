@@ -57,7 +57,7 @@ const Instructions: React.FC = (): React.ReactElement => {
 
   return (
     <div className="px-6 py-8">
-      <div className="pb-4">How to play:</div>
+      <div className="pb-4 text-blue-800">How to play:</div>
       {getInstructionWithKey()}
       {getInstructions()}
     </div>

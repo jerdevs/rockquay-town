@@ -2,6 +2,7 @@ import React from "react";
 import { GameSequence } from "./App.interface";
 import { initialGameSequence, resetGameSequence } from "./App.utils";
 import BattleMap from "./components/BattleMap/BattleMap";
+import Credits from "./components/Credits/Credits";
 import GameMap from "./components/GameMap/GameMap";
 import Instructions from "./components/Instructions/Instructions";
 import ScreenCover from "./components/ScreenCover/ScreenCover";
@@ -52,9 +53,14 @@ const App: React.FC = (): React.ReactElement => {
   return (
     <StoreProvider>
       <div>
-        <div className="p-6">Welcome to Rockquay Town!</div>
-        <div>{getGame()}</div>
+        <div className="p-6">
+          <span className="text-amber-600">Hello adventurer, </span>
+          <span>welcome to </span>
+          <span className="text-sky-600">Rockquay Town!</span>
+        </div>
+        <div className="pl-6">{getGame()}</div>
         <Instructions />
+        <Credits />
       </div>
     </StoreProvider>
   );
