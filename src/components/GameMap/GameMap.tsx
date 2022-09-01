@@ -1,5 +1,4 @@
 import React from "react";
-import { Sprite } from "../../App.interface";
 import {
   drawChar,
   drawImage,
@@ -12,13 +11,16 @@ import {
   MAX_PLAYER_ELAPSED,
   MAX_CHAR_FRAMES,
 } from "../../Constants";
-import { Boundary, CharFrame, GameMapProps } from "./GameMap.interface";
+import { AppContext } from "../../providers/StoreContext";
+import { ActionTypes } from "../../store/reducers";
+import {
+  Boundary,
+  CharFrame,
+  GameMapProps,
+  Movable,
+} from "./GameMap.interface";
 import {
   initialBackgroundSprite,
-  getBoundaries,
-  initialForegroundSprite,
-  initialPlayerSprite,
-  getBattleZones,
   drawBoundary,
   getUpdatedMovables,
   player,
@@ -31,21 +33,7 @@ const GameMap: React.FC<GameMapProps> = (
   const canvasRef: React.RefObject<HTMLCanvasElement> =
     React.useRef<HTMLCanvasElement>(null);
   const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
-  // Need to store below in store
-  const [backgroundSprite, setBackgroundSprite] = React.useState<Sprite | null>(
-    null
-  );
-  const [boundaries, setBoundaries] = React.useState<Boundary[]>(
-    getBoundaries()
-  );
-  const [foregroundSprite, setForegroundSprite] = React.useState<Sprite>(
-    initialForegroundSprite
-  );
-  const [playerSprite, setPlayerSprite] =
-    React.useState<Sprite>(initialPlayerSprite);
-  const [battleZones, setBattleZones] = React.useState<Boundary[]>(
-    getBattleZones()
-  );
+  const { state, dispatch } = React.useContext(AppContext);
 
   React.useEffect((): (() => void) => {
     const animation = requestAnimationFrame(animateGame);
@@ -53,35 +41,43 @@ const GameMap: React.FC<GameMapProps> = (
       cancelAnimationFrame(animation);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [backgroundSprite]);
+  }, [state.backgroundSprite]);
+
+  console.log(state);
 
   const animateGame = (): void => {
-    !backgroundSprite && setBackgroundSprite(initialBackgroundSprite);
+    !state.backgroundSprite &&
+      dispatch({
+        type: ActionTypes.UPDATE_BACKGROUND_SPRITE,
+        payload: initialBackgroundSprite,
+      });
+
     if (canvasRef.current) {
       canvasRef.current.focus();
       const canvasContext = canvasRef.current.getContext("2d");
       if (canvasContext) {
         // Draw background
-        backgroundSprite && drawImage(canvasContext, backgroundSprite);
+        state.backgroundSprite &&
+          drawImage(canvasContext, state.backgroundSprite);
         // Draw boundaries
-        boundaries.forEach((bound: Boundary): void => {
+        state.boundaries.forEach((bound: Boundary): void => {
           drawBoundary(canvasContext, bound);
         });
         // Draw battle zones
-        battleZones.forEach((bound: Boundary): void => {
+        state.battleZones.forEach((bound: Boundary): void => {
           drawBoundary(canvasContext, bound);
         });
         // Draw player
         drawChar(
           canvasContext,
-          playerSprite,
+          state.playerSprite,
           player,
           charFrame.frameIndex,
           MAX_CHAR_FRAMES
         );
         setCharFrame(getUpdatedCharFrame(charFrame, MAX_PLAYER_ELAPSED));
         // Draw foreground
-        drawImage(canvasContext, foregroundSprite);
+        drawImage(canvasContext, state.foregroundSprite);
       }
     }
   };
@@ -92,23 +88,22 @@ const GameMap: React.FC<GameMapProps> = (
     if (canvasRef.current && !battleInitiated) {
       const canvasContext = canvasRef.current.getContext("2d");
       if (canvasContext) {
-        if (isWASD && backgroundSprite) {
-          const updatedMovables = getUpdatedMovables(
-            backgroundSprite,
-            boundaries,
-            foregroundSprite,
-            playerSprite,
-            battleZones,
+        if (isWASD && state.backgroundSprite) {
+          const updatedMovables: Movable = getUpdatedMovables(
+            state.backgroundSprite,
+            state.boundaries,
+            state.foregroundSprite,
+            state.playerSprite,
+            state.battleZones,
             e.key,
             (): void => {
               onBattleInitiated && onBattleInitiated();
             }
           );
-          setBackgroundSprite(updatedMovables.backgroundSprite);
-          setBoundaries(updatedMovables.boundaries);
-          setForegroundSprite(updatedMovables.foregroundSprite);
-          setPlayerSprite(updatedMovables.playerSprite);
-          setBattleZones(updatedMovables.battleZones);
+          dispatch({
+            type: ActionTypes.UPDATE_GAME_MAP_MOVABLES,
+            payload: updatedMovables,
+          });
         }
       }
     }
