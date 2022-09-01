@@ -45,7 +45,10 @@ const Instructions: React.FC = (): React.ReactElement => {
         {instructions.map(
           (instruction: string, index: number): React.ReactElement => {
             return (
-              <div key={index} className="pb-3">
+              <div
+                key={index}
+                className={`${index !== instructions.length - 1 && "pb-3"}`}
+              >
                 {index + 2}. {instruction}
               </div>
             );
@@ -56,7 +59,7 @@ const Instructions: React.FC = (): React.ReactElement => {
   };
 
   return (
-    <div className="px-6 py-8">
+    <div className="px-8 pb-8">
       <div className="pb-4 text-blue-800">How to play:</div>
       {getInstructionWithKey()}
       {getInstructions()}

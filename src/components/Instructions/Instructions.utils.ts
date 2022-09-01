@@ -8,7 +8,7 @@ export const keys: string[] = [
 ];
 
 export const instructions: string[] = [
-  "You may encounter a monster to battle when you walk on green grass patches!",
+  "You can encounter a monster to battle when you walk on grass patches!",
   "During battling, you can view the attack type when hovering over an attack.",
   "After your attack is completed, please click on the dialog box or press space to continue.",
   "Once your turn is over, it will be the enemy's turn and his attack will be randomized.",

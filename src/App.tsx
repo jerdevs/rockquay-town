@@ -12,6 +12,7 @@ import StoreProvider from "./providers/StoreProvider";
 const App: React.FC = (): React.ReactElement => {
   const [gameSequence, setGameSequence] =
     React.useState<GameSequence>(initialGameSequence);
+  const [showStartButton, setShowStartButton] = React.useState(true);
 
   const getGame = (): React.ReactElement => {
     return (
@@ -53,13 +54,35 @@ const App: React.FC = (): React.ReactElement => {
   return (
     <StoreProvider>
       <div>
-        <div className="p-6">
+        <div className="p-8">
           <span className="text-amber-600">Hello adventurer, </span>
           <span>welcome to </span>
           <span className="text-sky-600">Rockquay Town!</span>
         </div>
-        <div className="pl-6">{getGame()}</div>
-        <Instructions />
+        {showStartButton && (
+          <div className="pl-8 pb-8">
+            <div className="pb-4 text-teal-800">Goal:</div>
+            <div>
+              This is a 2D interactive game where you will explore the town and
+              defeat as many monsters as you can in order to protect your
+              villagers from harm.
+            </div>
+          </div>
+        )}
+        {!showStartButton && <div className="pl-8">{getGame()}</div>}
+        <div className={!showStartButton ? "pt-8" : ""}>
+          <Instructions />
+        </div>
+        {showStartButton && (
+          <div className="pl-8 pb-8">
+            <button
+              className="border-amber-600 text-amber-600 border-solid border-4 py-4 px-8 hover:bg-amber-600 hover:text-white"
+              onClick={(): void => setShowStartButton(false)}
+            >
+              Press to Start
+            </button>
+          </div>
+        )}
         <Credits />
       </div>
     </StoreProvider>
