@@ -172,6 +172,7 @@ const BattleMap: React.FC<BattleMapProps> = (
     isEnemy = false,
     showDialogBoxOnComplete = false
   ): void => {
+    !isEnemy && setShowDialogBox(true);
     setAttackSelected({
       monster: selectedAttack.monster,
       attack: selectedAttack.attack,

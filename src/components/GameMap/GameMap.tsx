@@ -27,6 +27,7 @@ import {
 } from "./GameMap.utils";
 import MapAudio from "../../assets/audio/Map.wav";
 import InitBattleAudio from "../../assets/audio/InitBattle.wav";
+import WalkingAudio from "../../assets/audio/Walking.wav";
 
 const GameMap: React.FC<GameMapProps> = (
   props: GameMapProps
@@ -36,6 +37,7 @@ const GameMap: React.FC<GameMapProps> = (
     React.useRef<HTMLCanvasElement>(null);
   const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
   const { state, dispatch } = React.useContext(AppContext);
+  const [isWalking, setIsWalking] = React.useState(false);
 
   React.useEffect((): (() => void) => {
     const animation = requestAnimationFrame(animateGame);
@@ -89,6 +91,7 @@ const GameMap: React.FC<GameMapProps> = (
       const canvasContext = canvasRef.current.getContext("2d");
       if (canvasContext) {
         if (isWASD && state.backgroundSprite) {
+          setIsWalking(true);
           const updatedMovables: Movable = getUpdatedMovables(
             state.backgroundSprite,
             state.boundaries,
@@ -116,6 +119,7 @@ const GameMap: React.FC<GameMapProps> = (
         autoPlay
         loop={!battleInitiated}
       />
+      {isWalking && <audio src={WalkingAudio} autoPlay />}
       <canvas
         className="outline-0"
         width={CANVAS_WIDTH}
@@ -123,6 +127,7 @@ const GameMap: React.FC<GameMapProps> = (
         ref={canvasRef}
         tabIndex={-1}
         onKeyDown={onKeyDown}
+        onKeyUp={(): void => setIsWalking(false)}
       />
     </>
   );
