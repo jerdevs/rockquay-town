@@ -90,13 +90,14 @@ export const getUpdatedMovables = (
         ((currentPlayerSprite.image.width / MAX_CHAR_FRAMES) *
           currentPlayerSprite.image.height) /
           2 &&
-      Math.random() < 0.03
+      Math.random() < 0.02
     ) {
       onBattleInitiated && onBattleInitiated();
       break;
     }
   }
   switch (keyPressed) {
+    case Key.ARROW_UP:
     case Key.W:
       player.src = PlayerUp;
       for (let i = 0; i < currentBoundaries.length; i++) {
@@ -155,6 +156,7 @@ export const getUpdatedMovables = (
         };
       }
       break;
+    case Key.ARROW_LEFT:
     case Key.A:
       player.src = PlayerLeft;
       for (let i = 0; i < currentBoundaries.length; i++) {
@@ -213,6 +215,7 @@ export const getUpdatedMovables = (
         };
       }
       break;
+    case Key.ARROW_DOWN:
     case Key.S:
       player.src = PlayerDown;
       for (let i = 0; i < currentBoundaries.length; i++) {
@@ -271,6 +274,7 @@ export const getUpdatedMovables = (
         };
       }
       break;
+    case Key.ARROW_RIGHT:
     case Key.D:
       player.src = PlayerRight;
       for (let i = 0; i < currentBoundaries.length; i++) {
@@ -388,11 +392,15 @@ export const isCollided = (rect1: Sprite, rect2: Boundary): boolean => {
   );
 };
 
-export const isWASD = (key: string): boolean => {
+export const isValidKeyPress = (key: string): boolean => {
   return (
-    key === Key.W.toLowerCase() ||
-    key === Key.A.toLowerCase() ||
-    key === Key.S.toLowerCase() ||
-    key === Key.D.toLowerCase()
+    key === Key.W ||
+    key === Key.A ||
+    key === Key.S ||
+    key === Key.D ||
+    key === Key.ARROW_UP ||
+    key === Key.ARROW_DOWN ||
+    key === Key.ARROW_LEFT ||
+    key === Key.ARROW_RIGHT
   );
 };

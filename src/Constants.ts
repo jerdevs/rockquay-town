@@ -9,7 +9,7 @@ export const MAX_CHAR_FRAMES = 4;
 export const CHAR_STEP_SIZE = 3;
 export const MAP_OFFSET_X = -50;
 export const MAP_OFFSET_Y = -1200;
-export const TACKLE_DAMAGE = 50;
+export const TACKLE_DAMAGE = 10;
 export const FIREBALL_DAMAGE = 25;
 export const ATTACK_TYPE = "Attack Type";
 
@@ -18,4 +18,8 @@ export enum Key {
   A = "a",
   S = "s",
   D = "d",
+  ARROW_UP = "ArrowUp",
+  ARROW_DOWN = "ArrowDown",
+  ARROW_LEFT = "ArrowLeft",
+  ARROW_RIGHT = "ArrowRight",
 }

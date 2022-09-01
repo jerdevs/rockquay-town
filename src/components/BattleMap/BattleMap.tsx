@@ -82,6 +82,7 @@ const BattleMap: React.FC<BattleMapProps> = (
 
   React.useEffect((): (() => void) => {
     if (showDialogBox) {
+      canvasRef.current?.focus();
       if (enemySpriteRef.current && playerHasWon) {
         enemySpriteRef.current.render = false;
       }
@@ -200,33 +201,35 @@ const BattleMap: React.FC<BattleMapProps> = (
     }
   };
 
-  const getDialogBox = (): React.ReactElement => {
+  const onAttackDialogBoxClicked = (): void => {
+    if (attackSelected.monster === player) {
+      // Randomize enemy attack
+      const enemyAttacks: Attack[] = monsters[enemy].attacks ?? [];
+      const randomAttack =
+        enemyAttacks[Math.floor(Math.random() * enemyAttacks.length)];
+      playerHealthBar > 0 &&
+        setPlayerHealthBar(playerHealthBar - randomAttack.damage);
+      onAttack(
+        {
+          monster: enemy,
+          attack: randomAttack.name,
+        },
+        randomAttack.damage,
+        enemySpriteRef,
+        playerSpriteRef,
+        enemyFireballSpriteRef,
+        true
+      );
+    } else {
+      setShowDialogBox(false);
+    }
+  };
+
+  const getAttackUsedDialogBox = (): React.ReactElement => {
     return (
       <DialogBox
         message={`${attackSelected.monster} used ${attackSelected.attack}!`}
-        onDialogBoxClicked={(): void => {
-          if (attackSelected.monster === player) {
-            // Randomize enemy attack
-            const enemyAttacks: Attack[] = monsters[enemy].attacks ?? [];
-            const randomAttack =
-              enemyAttacks[Math.floor(Math.random() * enemyAttacks.length)];
-            playerHealthBar > 0 &&
-              setPlayerHealthBar(playerHealthBar - randomAttack.damage);
-            onAttack(
-              {
-                monster: enemy,
-                attack: randomAttack.name,
-              },
-              randomAttack.damage,
-              enemySpriteRef,
-              playerSpriteRef,
-              enemyFireballSpriteRef,
-              true
-            );
-          } else {
-            setShowDialogBox(false);
-          }
-        }}
+        onDialogBoxClicked={onAttackDialogBoxClicked}
       />
     );
   };
@@ -275,8 +278,16 @@ const BattleMap: React.FC<BattleMapProps> = (
           height={CANVAS_HEIGHT}
           ref={canvasRef}
           tabIndex={-1}
+          onKeyDown={(e: React.KeyboardEvent<HTMLElement>): void => {
+            if (showDialogBox && !charHasFainted) {
+              e.preventDefault();
+              e.key === " " && onAttackDialogBoxClicked();
+            }
+          }}
         />
-        {showDialogBox ? getDialogBox() : showAttackBar && getAttackBar()}
+        {showDialogBox
+          ? getAttackUsedDialogBox()
+          : showAttackBar && getAttackBar()}
         {charHasFainted && (
           <DialogBox
             message={`${playerHasWon ? enemy : player} has fainted!`}
