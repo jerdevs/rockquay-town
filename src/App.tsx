@@ -65,7 +65,7 @@ const App: React.FC = (): React.ReactElement => {
             <div>
               This is a 2D interactive game where you will explore the town and
               defeat as many monsters as you can in order to protect your
-              villagers from harm.
+              villagers from harm. This is best played on a web browser.
             </div>
           </div>
         )}
