@@ -279,9 +279,15 @@ const BattleMap: React.FC<BattleMapProps> = (
           ref={canvasRef}
           tabIndex={-1}
           onKeyDown={(e: React.KeyboardEvent<HTMLElement>): void => {
-            if (showDialogBox && !charHasFainted) {
+            if (showDialogBox) {
               e.preventDefault();
-              e.key === " " && onAttackDialogBoxClicked();
+              if (e.key === " ") {
+                if (!charHasFainted) {
+                  onAttackDialogBoxClicked();
+                } else {
+                  setShowScreenCover(true);
+                }
+              }
             }
           }}
         />
