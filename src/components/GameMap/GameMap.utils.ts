@@ -369,8 +369,7 @@ export const drawBoundary = (
   canvasContext: CanvasRenderingContext2D,
   boundary: Boundary
 ): void => {
-  // canvasContext.fillStyle = "rgba(255, 0, 0, 0)";
-  canvasContext.fillStyle = "red";
+  canvasContext.fillStyle = "rgba(255, 0, 0, 0)";
   canvasContext.fillRect(
     boundary.position.x,
     boundary.position.y,
