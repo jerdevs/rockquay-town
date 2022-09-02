@@ -1,12 +1,15 @@
 import React from "react";
 import { GameSequence } from "./App.interface";
-import { initialGameSequence, resetGameSequence } from "./App.utils";
+import {
+  getRandomMonster,
+  initialGameSequence,
+  resetGameSequence,
+} from "./App.utils";
 import BattleMap from "./components/BattleMap/BattleMap";
 import Credits from "./components/Credits/Credits";
 import GameMap from "./components/GameMap/GameMap";
 import Instructions from "./components/Instructions/Instructions";
 import ScreenCover from "./components/ScreenCover/ScreenCover";
-import { MonsterNames } from "./data/Monsters/Monsters";
 import StoreProvider from "./providers/StoreProvider";
 
 const App: React.FC = (): React.ReactElement => {
@@ -42,8 +45,8 @@ const App: React.FC = (): React.ReactElement => {
         )}
         {gameSequence.onBattleMap && (
           <BattleMap
-            player={MonsterNames.EMBY}
-            enemy={MonsterNames.DRAGGLE}
+            player={getRandomMonster()}
+            enemy={getRandomMonster(true)}
             goToGameMap={(): void => setGameSequence(initialGameSequence)}
           />
         )}

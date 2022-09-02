@@ -7,12 +7,12 @@ import {
   MAX_SYMBOL,
 } from "../../Constants";
 import { Boundary, Movable } from "./GameMap.interface";
-import RockquayTown from "../../assets/images/RockquayTown.png";
-import Foreground from "../../assets/images/Foreground.png";
-import PlayerDown from "../../assets/images/PlayerDown.png";
-import PlayerUp from "../../assets/images/PlayerUp.png";
-import PlayerLeft from "../../assets/images/PlayerLeft.png";
-import PlayerRight from "../../assets/images/PlayerRight.png";
+import RockquayTown from "../../assets/images/Maps/RockquayTown.png";
+import Foreground from "../../assets/images/Maps/Foreground.png";
+import PlayerDown from "../../assets/images/Characters/PlayerDown.png";
+import PlayerUp from "../../assets/images/Characters/PlayerUp.png";
+import PlayerLeft from "../../assets/images/Characters/PlayerLeft.png";
+import PlayerRight from "../../assets/images/Characters/PlayerRight.png";
 import { collisions } from "../../data/Collisions/Collisions";
 import { battleZones } from "../../data/BattleZones/BattleZones";
 import {

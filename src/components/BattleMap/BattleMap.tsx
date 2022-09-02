@@ -29,7 +29,12 @@ import {
   getAttackAudioSource,
 } from "./BattleMap.utils";
 import { AttackNames } from "../../data/Attacks/Attacks";
-import { draggle, emby, monsters } from "../../data/Monsters/Monsters";
+import {
+  draggle,
+  emby,
+  playerMonsters,
+  enemyMonsters,
+} from "../../data/Monsters/Monsters";
 import { AttackSelected } from "./BattleMap.interface";
 import ScreenCover from "../ScreenCover/ScreenCover";
 
@@ -46,10 +51,10 @@ const BattleMap: React.FC<BattleMapProps> = (
   const canvasRef: React.RefObject<HTMLCanvasElement> =
     React.useRef<HTMLCanvasElement>(null);
   const playerSpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
-    monsters[player]
+    playerMonsters[player]
   );
   const enemySpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
-    monsters[enemy]
+    enemyMonsters[enemy]
   );
   const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
   const [playerHealthBar, setPlayerHealthBar] = React.useState<number>(100);
@@ -204,7 +209,7 @@ const BattleMap: React.FC<BattleMapProps> = (
   const onAttackDialogBoxClicked = (): void => {
     if (attackSelected.monster === player) {
       // Randomize enemy attack
-      const enemyAttacks: Attack[] = monsters[enemy].attacks ?? [];
+      const enemyAttacks: Attack[] = enemyMonsters[enemy].attacks ?? [];
       const randomAttack =
         enemyAttacks[Math.floor(Math.random() * enemyAttacks.length)];
       playerHealthBar > 0 &&
@@ -237,7 +242,7 @@ const BattleMap: React.FC<BattleMapProps> = (
   const getAttackBar = (): React.ReactElement => {
     return (
       <AttackBar
-        attacks={monsters[player].attacks ?? []}
+        attacks={playerMonsters[player].attacks ?? []}
         onAttack={(attack: Attack): void => {
           // Player chooses attack
           enemyHealthBar > 0 &&

@@ -1,3 +1,4 @@
+import { enemies, players } from "./data/Monsters/Monsters";
 import { GameSequence, Sprite } from "./App.interface";
 import { CharFrame } from "./components/GameMap/GameMap.interface";
 import { MAX_CHAR_FRAMES } from "./Constants";
@@ -63,4 +64,10 @@ export const getUpdatedCharFrame = (
         ? 1
         : currentCharFrame.elapsed + 1,
   };
+};
+
+export const getRandomMonster = (isEnemy = false): string => {
+  const monsters = isEnemy ? enemies : players;
+  const randomIndex = Math.floor(Math.random() * monsters.length);
+  return monsters[randomIndex];
 };

@@ -1,8 +1,8 @@
 import { AttackNames } from "./../../data/Attacks/Attacks";
 import { AttackSelected } from "./BattleMap.interface";
 import { Sprite } from "../../App.interface";
-import BattleBackground from "../../assets/images/BattleBackground.png";
-import Fireball from "../../assets/images/Fireball.png";
+import BattleBackground from "../../assets/images/Maps/BattleBackground.png";
+import Fireball from "../../assets/images/Attacks/Fireball.png";
 import { gsap } from "gsap";
 import BattleAudio from "../../assets/audio/Battle.mp3";
 import VictoryAudio from "../../assets/audio/Victory.wav";
