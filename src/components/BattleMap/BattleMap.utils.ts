@@ -3,16 +3,24 @@ import { AttackSelected } from "./BattleMap.interface";
 import { Sprite } from "../../App.interface";
 import BattleBackground from "../../assets/images/Maps/BattleBackground.png";
 import Fireball from "../../assets/images/Attacks/Fireball.png";
+import GasBomb from "../../assets/images/Attacks/GasBomb.png";
+import ColdSpikes from "../../assets/images/Attacks/ColdSpikes.png";
 import { gsap } from "gsap";
 import BattleAudio from "../../assets/audio/Battle.mp3";
 import VictoryAudio from "../../assets/audio/Victory.wav";
 import TackleHitAudio from "../../assets/audio/TackleHit.wav";
 import FireballHitAudio from "../../assets/audio/FireballHit.wav";
+import ExplosionAudio from "../../assets/audio/Explosion.wav";
+import IceAudio from "../../assets/audio/Ice.wav";
 
 export const battleMap = new Image();
 battleMap.src = BattleBackground;
 export const fireball = new Image();
 fireball.src = Fireball;
+export const gasBomb = new Image();
+gasBomb.src = GasBomb;
+export const coldSpikes = new Image();
+coldSpikes.src = ColdSpikes;
 
 export const initialBackgroundSprite: Sprite = {
   position: {
@@ -22,20 +30,22 @@ export const initialBackgroundSprite: Sprite = {
   image: battleMap,
 };
 
-export const initialPlayerFireballSprite: Sprite = {
-  position: {
-    x: 280,
-    y: 325,
-  },
-  image: fireball,
-};
-
-export const initialEnemyFireballSprite: Sprite = {
-  position: {
-    x: 800,
-    y: 100,
-  },
-  image: fireball,
+export const getProjectileSprite = (
+  attackName = "",
+  isEnemy = false
+): Sprite => {
+  return {
+    position: {
+      x: isEnemy ? 800 : 280,
+      y: isEnemy ? 100 : 325,
+    },
+    image:
+      attackName === AttackNames.FIREBALL
+        ? fireball
+        : attackName === AttackNames.GAS_BOMB
+        ? gasBomb
+        : coldSpikes,
+  };
 };
 
 export const initialPlayerAttackSelected = (player: string): AttackSelected => {
@@ -77,22 +87,23 @@ export const tackleEnemy = (
       });
 };
 
-export const throwFireball = (
-  fireballSpriteRef: React.RefObject<Sprite>,
+export const throwProjectile = (
+  projectileSpriteRef: React.RefObject<Sprite>,
   enemyRef: React.RefObject<Sprite>,
+  attackName: string,
   isEnemy = false,
-  fireballComplete?: () => void,
+  onProjectileComplete?: () => void,
   onComplete?: () => void
 ): void => {
   const playerAttackTimeline = gsap.timeline();
-  fireballSpriteRef.current?.position &&
+  projectileSpriteRef.current?.position &&
     enemyRef.current?.position &&
     playerAttackTimeline
-      .to(fireballSpriteRef.current.position, {
+      .to(projectileSpriteRef.current.position, {
         x: enemyRef.current.position.x,
         y: enemyRef.current.position.y,
         onComplete: (): void => {
-          fireballComplete && fireballComplete();
+          onProjectileComplete && onProjectileComplete();
           enemyRef.current?.position &&
             gsap.to(enemyRef.current.position, {
               opacity: 0,
@@ -104,13 +115,13 @@ export const throwFireball = (
             });
         },
       })
-      .to(fireballSpriteRef.current.position, {
+      .to(projectileSpriteRef.current.position, {
         x: isEnemy
-          ? initialEnemyFireballSprite.position.x
-          : initialPlayerFireballSprite.position.x,
+          ? getProjectileSprite(attackName, true).position.x
+          : getProjectileSprite(attackName).position.x,
         y: isEnemy
-          ? initialEnemyFireballSprite.position.y
-          : initialPlayerFireballSprite.position.y,
+          ? getProjectileSprite(attackName, true).position.y
+          : getProjectileSprite(attackName).position.y,
       });
 };
 
@@ -128,6 +139,10 @@ export const getAttackAudioSource = (attackAudio: string): string => {
       return TackleHitAudio;
     case AttackNames.FIREBALL:
       return FireballHitAudio;
+    case AttackNames.GAS_BOMB:
+      return ExplosionAudio;
+    case AttackNames.COLD_SPIKES:
+      return IceAudio;
   }
   return "";
 };

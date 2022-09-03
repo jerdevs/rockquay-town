@@ -4,9 +4,9 @@ import { CharFrame } from "./components/GameMap/GameMap.interface";
 import { MAX_CHAR_FRAMES } from "./Constants";
 
 export const initialGameSequence: GameSequence = {
-  onGameMap: true,
+  onGameMap: false,
   battleInitiated: false,
-  onBattleMap: false,
+  onBattleMap: true,
 };
 
 export const resetGameSequence: GameSequence = {

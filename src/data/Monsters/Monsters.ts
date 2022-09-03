@@ -161,7 +161,12 @@ const getMonster = (image: HTMLImageElement, isEnemy = false): Sprite => {
   return {
     position: isEnemy ? enemyPosition : playerPosition,
     image: image,
-    attacks: [attacks[AttackNames.TACKLE], attacks[AttackNames.FIREBALL]],
+    attacks: [
+      attacks[AttackNames.TACKLE],
+      attacks[AttackNames.FIREBALL],
+      attacks[AttackNames.GAS_BOMB],
+      attacks[AttackNames.COLD_SPIKES],
+    ],
     render: true,
   };
 };

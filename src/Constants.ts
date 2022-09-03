@@ -11,6 +11,8 @@ export const MAP_OFFSET_X = -50;
 export const MAP_OFFSET_Y = -1200;
 export const TACKLE_DAMAGE = 10;
 export const FIREBALL_DAMAGE = 25;
+export const GAS_BOMB_DAMAGE = 20;
+export const COLD_SPIKES_DAMAGE = 15;
 export const ATTACK_TYPE = "Attack Type";
 
 export enum Key {

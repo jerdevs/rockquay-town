@@ -20,13 +20,12 @@ import { Attack } from "../../data/Attacks/Attacks.interface";
 import {
   initialBackgroundSprite,
   tackleEnemy,
-  throwFireball,
+  throwProjectile,
   fireball,
   initialPlayerAttackSelected,
-  initialEnemyFireballSprite,
-  initialPlayerFireballSprite,
   getBattleMapAudioSource,
   getAttackAudioSource,
+  getProjectileSprite,
 } from "./BattleMap.utils";
 import { AttackNames } from "../../data/Attacks/Attacks";
 import {
@@ -59,13 +58,11 @@ const BattleMap: React.FC<BattleMapProps> = (
   const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
   const [playerHealthBar, setPlayerHealthBar] = React.useState<number>(100);
   const [enemyHealthBar, setEnemyHealthBar] = React.useState<number>(100);
-  const [drawFireball, setDrawFireball] = React.useState(false);
-  const playerFireballSpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
-    initialPlayerFireballSprite
-  );
-  const enemyFireballSpriteRef: React.RefObject<Sprite> = React.useRef<Sprite>(
-    initialEnemyFireballSprite
-  );
+  const [drawProjectile, setDrawProjectile] = React.useState(false);
+  const playerProjectileSpriteRef: React.RefObject<Sprite> =
+    React.useRef<Sprite>(getProjectileSprite());
+  const enemyProjectileSpriteRef: React.RefObject<Sprite> =
+    React.useRef<Sprite>(getProjectileSprite("", true));
   const [attackSelected, setAttackSelected] = React.useState<AttackSelected>(
     initialPlayerAttackSelected(player)
   );
@@ -133,23 +130,23 @@ const BattleMap: React.FC<BattleMapProps> = (
             MAX_CHAR_FRAMES
           );
         canvasContext.restore();
-        // Draw fireball
-        drawFireball &&
+        // Draw projectile
+        drawProjectile &&
           attackSelected.monster === player &&
-          playerFireballSpriteRef.current &&
+          playerProjectileSpriteRef.current &&
           drawChar(
             canvasContext,
-            playerFireballSpriteRef.current,
+            playerProjectileSpriteRef.current,
             fireball,
             charFrame.frameIndex,
             MAX_CHAR_FRAMES
           );
-        drawFireball &&
+        drawProjectile &&
           attackSelected.monster === enemy &&
-          enemyFireballSpriteRef.current &&
+          enemyProjectileSpriteRef.current &&
           drawChar(
             canvasContext,
-            enemyFireballSpriteRef.current,
+            enemyProjectileSpriteRef.current,
             fireball,
             charFrame.frameIndex,
             MAX_CHAR_FRAMES
@@ -168,12 +165,26 @@ const BattleMap: React.FC<BattleMapProps> = (
     }
   };
 
+  const setProjectileImages = (attackName: string, isEnemy = false): void => {
+    if (isEnemy) {
+      if (enemyProjectileSpriteRef.current) {
+        enemyProjectileSpriteRef.current.image =
+          getProjectileSprite(attackName).image;
+      }
+    } else {
+      if (playerProjectileSpriteRef.current) {
+        playerProjectileSpriteRef.current.image =
+          getProjectileSprite(attackName).image;
+      }
+    }
+  };
+
   const onAttack = (
     selectedAttack: AttackSelected,
     damage: number,
     player: React.RefObject<Sprite>,
     enemy: React.RefObject<Sprite>,
-    fireball: React.RefObject<Sprite>,
+    projectileSprite: React.RefObject<Sprite>,
     isEnemy = false,
     showDialogBoxOnComplete = false
   ): void => {
@@ -190,13 +201,17 @@ const BattleMap: React.FC<BattleMapProps> = (
           setAttackAudio("");
         });
         break;
+      case AttackNames.GAS_BOMB:
       case AttackNames.FIREBALL:
-        setDrawFireball(true);
-        throwFireball(
-          fireball,
+      case AttackNames.COLD_SPIKES:
+        setProjectileImages(selectedAttack.attack, isEnemy);
+        setDrawProjectile(true);
+        throwProjectile(
+          projectileSprite,
           enemy,
+          selectedAttack.attack,
           isEnemy,
-          (): void => setDrawFireball(false),
+          (): void => setDrawProjectile(false),
           (): void => {
             showDialogBoxOnComplete && setShowDialogBox(true);
             setAttackAudio("");
@@ -222,7 +237,7 @@ const BattleMap: React.FC<BattleMapProps> = (
         randomAttack.damage,
         enemySpriteRef,
         playerSpriteRef,
-        enemyFireballSpriteRef,
+        enemyProjectileSpriteRef,
         true
       );
     } else {
@@ -255,7 +270,7 @@ const BattleMap: React.FC<BattleMapProps> = (
             attack.damage,
             playerSpriteRef,
             enemySpriteRef,
-            playerFireballSpriteRef,
+            playerProjectileSpriteRef,
             false,
             true
           );
