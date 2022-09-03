@@ -39,6 +39,6 @@ export const attacks: { [attack: string]: Attack } = {
     name: AttackNames.COLD_SPIKES,
     damage: COLD_SPIKES_DAMAGE,
     type: AttackTypes.ICE,
-    bgColor: "bg-blue-300",
+    bgColor: "bg-sky-300",
   },
 };
