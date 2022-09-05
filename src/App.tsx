@@ -12,6 +12,7 @@ import Instructions from "./components/Instructions/Instructions";
 import ScreenCover from "./components/ScreenCover/ScreenCover";
 import StoreProvider from "./providers/StoreProvider";
 import PixelIcon from "./assets/images/PixelIcon.png";
+import { isBrowser } from "react-device-detect";
 
 const App: React.FC = (): React.ReactElement => {
   const [gameSequence, setGameSequence] =
@@ -64,8 +65,8 @@ const App: React.FC = (): React.ReactElement => {
           <span className="text-sky-600">Rockquay Town!</span>
         </div>
         {showStartButton && (
-          <div className="pl-8 pb-8">
-            <div className="pb-4 text-teal-800 flex">
+          <div className="px-8 pb-8">
+            <div className="pb-4 text-cyan-600 flex">
               <div>
                 <img src={PixelIcon} alt="Your mission" />
               </div>
@@ -78,18 +79,26 @@ const App: React.FC = (): React.ReactElement => {
             </div>
           </div>
         )}
-        {!showStartButton && <div className="pl-8">{getGame()}</div>}
-        <div className={!showStartButton ? "pt-8" : ""}>
-          <Instructions />
-        </div>
-        {showStartButton && (
-          <div className="pl-8 pb-8">
-            <button
-              className="border-amber-600 text-amber-600 border-solid border-4 py-4 px-8 hover:bg-amber-600 hover:text-white"
-              onClick={(): void => setShowStartButton(false)}
-            >
-              &gt; Press to Start
-            </button>
+        {isBrowser ? (
+          <>
+            {!showStartButton && <div className="pl-8">{getGame()}</div>}
+            <div className={!showStartButton ? "pt-8" : ""}>
+              <Instructions />
+            </div>
+            {showStartButton && (
+              <div className="pl-8 pb-8">
+                <button
+                  className="border-amber-600 text-amber-600 border-solid border-4 py-4 px-8 hover:bg-amber-600 hover:text-white"
+                  onClick={(): void => setShowStartButton(false)}
+                >
+                  &gt; Press to Start
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="px-8 pb-8 flex text-red-600">
+            Please use a web browser to play the game!
           </div>
         )}
         <Credits />

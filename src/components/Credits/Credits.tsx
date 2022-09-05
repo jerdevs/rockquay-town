@@ -2,8 +2,8 @@ import HeartIcon from "../../assets/images/HeartIcon.png";
 
 const Credits: React.FC = (): React.ReactElement => {
   return (
-    <div className="px-6 pb-8">
-      <div className="pb-4 text-rose-800 flex">
+    <div className="px-8 pb-8">
+      <div className="pb-4 text-red-700 flex">
         <div>
           <img src={HeartIcon} alt="How to play" />
         </div>
