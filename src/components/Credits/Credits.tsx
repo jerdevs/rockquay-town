@@ -1,7 +1,14 @@
+import HeartIcon from "../../assets/images/HeartIcon.png";
+
 const Credits: React.FC = (): React.ReactElement => {
   return (
     <div className="px-6 pb-8">
-      <div className="pb-4 text-rose-800">Credits:</div>
+      <div className="pb-4 text-rose-800 flex">
+        <div>
+          <img src={HeartIcon} alt="How to play" />
+        </div>
+        <div className="pl-3">CREDITS</div>
+      </div>
       <div>
         Inspired and credits to{" "}
         <a

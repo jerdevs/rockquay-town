@@ -21,7 +21,6 @@ import {
   initialBackgroundSprite,
   tackleEnemy,
   throwProjectile,
-  fireball,
   initialPlayerAttackSelected,
   getBattleMapAudioSource,
   getAttackAudioSource,
@@ -58,7 +57,7 @@ const BattleMap: React.FC<BattleMapProps> = (
   const [charFrame, setCharFrame] = React.useState<CharFrame>(initialCharFrame);
   const [playerHealthBar, setPlayerHealthBar] = React.useState<number>(100);
   const [enemyHealthBar, setEnemyHealthBar] = React.useState<number>(100);
-  const [drawProjectile, setDrawProjectile] = React.useState(false);
+  const [drawProjectile, setDrawProjectile] = React.useState("");
   const playerProjectileSpriteRef: React.RefObject<Sprite> =
     React.useRef<Sprite>(getProjectileSprite());
   const enemyProjectileSpriteRef: React.RefObject<Sprite> =
@@ -137,7 +136,7 @@ const BattleMap: React.FC<BattleMapProps> = (
           drawChar(
             canvasContext,
             playerProjectileSpriteRef.current,
-            fireball,
+            getProjectileSprite(drawProjectile).image,
             charFrame.frameIndex,
             MAX_CHAR_FRAMES
           );
@@ -147,7 +146,7 @@ const BattleMap: React.FC<BattleMapProps> = (
           drawChar(
             canvasContext,
             enemyProjectileSpriteRef.current,
-            fireball,
+            getProjectileSprite(drawProjectile).image,
             charFrame.frameIndex,
             MAX_CHAR_FRAMES
           );
@@ -205,13 +204,13 @@ const BattleMap: React.FC<BattleMapProps> = (
       case AttackNames.FIREBALL:
       case AttackNames.COLD_SPIKES:
         setProjectileImages(selectedAttack.attack, isEnemy);
-        setDrawProjectile(true);
+        setDrawProjectile(selectedAttack.attack);
         throwProjectile(
           projectileSprite,
           enemy,
           selectedAttack.attack,
           isEnemy,
-          (): void => setDrawProjectile(false),
+          (): void => setDrawProjectile(""),
           (): void => {
             showDialogBoxOnComplete && setShowDialogBox(true);
             setAttackAudio("");

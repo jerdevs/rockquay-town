@@ -11,6 +11,7 @@ import GameMap from "./components/GameMap/GameMap";
 import Instructions from "./components/Instructions/Instructions";
 import ScreenCover from "./components/ScreenCover/ScreenCover";
 import StoreProvider from "./providers/StoreProvider";
+import PixelIcon from "./assets/images/PixelIcon.png";
 
 const App: React.FC = (): React.ReactElement => {
   const [gameSequence, setGameSequence] =
@@ -64,7 +65,12 @@ const App: React.FC = (): React.ReactElement => {
         </div>
         {showStartButton && (
           <div className="pl-8 pb-8">
-            <div className="pb-4 text-teal-800">Goal:</div>
+            <div className="pb-4 text-teal-800 flex">
+              <div>
+                <img src={PixelIcon} alt="Your mission" />
+              </div>
+              <div className="pl-3">YOUR MISSION</div>
+            </div>
             <div>
               This is a 2D interactive game where you will explore the town and
               defeat as many monsters as you can in order to protect your
@@ -82,7 +88,7 @@ const App: React.FC = (): React.ReactElement => {
               className="border-amber-600 text-amber-600 border-solid border-4 py-4 px-8 hover:bg-amber-600 hover:text-white"
               onClick={(): void => setShowStartButton(false)}
             >
-              Press to Start
+              &gt; Press to Start
             </button>
           </div>
         )}
