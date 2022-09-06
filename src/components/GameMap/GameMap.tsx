@@ -20,7 +20,6 @@ import {
   Movable,
 } from "./GameMap.interface";
 import {
-  initialBackgroundSprite,
   drawBoundary,
   getUpdatedMovables,
   player,
@@ -40,13 +39,54 @@ const GameMap: React.FC<GameMapProps> = (
   const { state, dispatch } = React.useContext(AppContext);
   const [isWalking, setIsWalking] = React.useState(false);
 
+  const getGameMapContents = React.useCallback(
+    (canvasContext: CanvasRenderingContext2D): void => {
+      // Draw background
+      drawImage(canvasContext, state.backgroundSprite);
+      // Draw boundaries
+      state.boundaries.forEach((bound: Boundary): void => {
+        drawBoundary(canvasContext, bound);
+      });
+      // Draw battle zones
+      state.battleZones.forEach((bound: Boundary): void => {
+        drawBoundary(canvasContext, bound);
+      });
+      // Draw player
+      drawChar(
+        canvasContext,
+        state.playerSprite,
+        player,
+        charFrame.frameIndex,
+        MAX_CHAR_FRAMES
+      );
+      setCharFrame(getUpdatedCharFrame(charFrame, MAX_PLAYER_ELAPSED));
+      // Draw foreground
+      drawImage(canvasContext, state.foregroundSprite);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      state.backgroundSprite,
+      state.battleZones,
+      state.boundaries,
+      state.foregroundSprite,
+      state.playerSprite,
+    ]
+  );
+
+  const animateGame = React.useCallback((): void => {
+    if (canvasRef.current) {
+      canvasRef.current.focus();
+      const canvasContext = canvasRef.current.getContext("2d");
+      canvasContext && getGameMapContents(canvasContext);
+    }
+  }, [getGameMapContents]);
+
   React.useEffect((): (() => void) => {
     const animation = requestAnimationFrame(animateGame);
     return (): void => {
       cancelAnimationFrame(animation);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.backgroundSprite]);
+  }, [animateGame, state.backgroundSprite]);
 
   React.useEffect((): void => {
     // Initial map rendering
@@ -58,41 +98,8 @@ const GameMap: React.FC<GameMapProps> = (
           getGameMapContents(canvasContext);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const getGameMapContents = (
-    canvasContext: CanvasRenderingContext2D
-  ): void => {
-    // Draw background
-    drawImage(canvasContext, state.backgroundSprite);
-    // Draw boundaries
-    state.boundaries.forEach((bound: Boundary): void => {
-      drawBoundary(canvasContext, bound);
-    });
-    // Draw battle zones
-    state.battleZones.forEach((bound: Boundary): void => {
-      drawBoundary(canvasContext, bound);
-    });
-    // Draw player
-    drawChar(
-      canvasContext,
-      state.playerSprite,
-      player,
-      charFrame.frameIndex,
-      MAX_CHAR_FRAMES
-    );
-    setCharFrame(getUpdatedCharFrame(charFrame, MAX_PLAYER_ELAPSED));
-    // Draw foreground
-    drawImage(canvasContext, state.foregroundSprite);
-  };
-
-  const animateGame = (): void => {
-    if (canvasRef.current) {
-      canvasRef.current.focus();
-      const canvasContext = canvasRef.current.getContext("2d");
-      canvasContext && getGameMapContents(canvasContext);
-    }
-  };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLElement>): void => {
     e.preventDefault();
