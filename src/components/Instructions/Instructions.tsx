@@ -7,15 +7,19 @@ import ThinkingIcon from "../../assets/images/ThinkingIcon.png";
 
 const Instructions: React.FC = (): React.ReactElement => {
   const getKeyImage = (key: string): React.ReactElement => {
+    let src = "";
     switch (key) {
       case KeyImages.WASD_KEYS:
-        return <img className="mx-3" src={WASDKeys} alt="WASD Keys" />;
+        src = WASDKeys;
+        break;
       case KeyImages.ARROW_KEYS:
-        return <img className="mx-3" src={ArrowKeys} alt="Arrow Keys" />;
+        src = ArrowKeys;
+        break;
       case KeyImages.SPACEBAR_KEY:
-        return <img className="mx-3" src={SpacebarKey} alt="Spacebar Key" />;
+        src = SpacebarKey;
+        break;
     }
-    return <></>;
+    return <img className="mx-3 h-6 w-auto" src={src} alt={key} />;
   };
 
   const getInstruction = (instruction: string): React.ReactElement => {

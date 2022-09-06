@@ -15,7 +15,7 @@ const Credits: React.FC = (): React.ReactElement => {
           href="https://youtu.be/yP5DKzriqXA"
           target="_blank"
           rel="noreferrer"
-          className="text-rose-800"
+          className="text-red-700"
         >
           Chris Courses
         </a>{" "}
