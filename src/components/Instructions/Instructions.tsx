@@ -60,7 +60,7 @@ const Instructions: React.FC = (): React.ReactElement => {
   return (
     <div className="px-8 pb-8">
       <div className="pb-4 text-orange-500 flex">
-        <div>
+        <div className="animate-bounce">
           <img src={ThinkingIcon} alt="How to play" />
         </div>
         <div className="pl-3">HOW TO PLAY</div>

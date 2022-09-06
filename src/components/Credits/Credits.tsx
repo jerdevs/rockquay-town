@@ -4,7 +4,7 @@ const Credits: React.FC = (): React.ReactElement => {
   return (
     <div className="px-8 pb-8">
       <div className="pb-4 text-red-700 flex">
-        <div>
+        <div className="animate-bounce">
           <img src={HeartIcon} alt="How to play" />
         </div>
         <div className="pl-3">CREDITS</div>

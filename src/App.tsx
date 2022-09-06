@@ -67,7 +67,7 @@ const App: React.FC = (): React.ReactElement => {
         {showStartButton && (
           <div className="px-8 pb-8">
             <div className="pb-4 text-cyan-600 flex">
-              <div>
+              <div className="animate-bounce">
                 <img src={PixelIcon} alt="Your mission" />
               </div>
               <div className="pl-3">YOUR MISSION</div>
