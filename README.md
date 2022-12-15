@@ -8,4 +8,4 @@ Inspired and credits to <a href="https://youtu.be/yP5DKzriqXA">Chris Courses</a>
 
 Tech stack: ReactJS, Tailwind CSS, TypeScript
 
-Deployed site: https://rockquay-town.netlify.app
+Published site: https://rockquay-town.netlify.app
